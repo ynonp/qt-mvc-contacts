@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    model = new QStandardItemModel(this);
+    QStandardItemModel *model = new QStandardItemModel(this);
 
     foreach( int id, _contacts.getAllContactIds() )
     {
@@ -19,9 +19,22 @@ MainWindow::MainWindow(QWidget *parent) :
         model->appendRow(item);
     }
 
-    ui->listView->setModel(model);
+
+    _model = new QSortFilterProxyModel(this);
+    ((QSortFilterProxyModel *)_model)->setSourceModel(model);
+
+    ui->listView->setModel(_model);
 
     QObject::connect(ui->listView, &QListView::clicked, this, &MainWindow::setInputFieldsData);
+    QObject::connect(ui->searchEdit, &QLineEdit::textChanged, this, &MainWindow::doFilter);
+}
+
+void MainWindow::doFilter(QString term)
+{
+    QSortFilterProxyModel *filterProxy =
+            qobject_cast<QSortFilterProxyModel *>(_model);
+
+    filterProxy->setFilterFixedString(term);
 }
 
 MainWindow::~MainWindow()
