@@ -20,21 +20,13 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
 
-    _model = new QSortFilterProxyModel(this);
-    ((QSortFilterProxyModel *)_model)->setSourceModel(model);
+    QSortFilterProxyModel *filterModel = new QSortFilterProxyModel(this);
+    filterModel->setSourceModel(model);
 
-    ui->listView->setModel(_model);
+    ui->listView->setModel(filterModel);
 
     QObject::connect(ui->listView, &QListView::clicked, this, &MainWindow::setInputFieldsData);
-    QObject::connect(ui->searchEdit, &QLineEdit::textChanged, this, &MainWindow::doFilter);
-}
-
-void MainWindow::doFilter(QString term)
-{
-    QSortFilterProxyModel *filterProxy =
-            qobject_cast<QSortFilterProxyModel *>(_model);
-
-    filterProxy->setFilterFixedString(term);
+    QObject::connect(ui->searchEdit, &QLineEdit::textChanged, filterModel, &QSortFilterProxyModel::setFilterFixedString);
 }
 
 MainWindow::~MainWindow()

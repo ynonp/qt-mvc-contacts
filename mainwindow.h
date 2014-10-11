@@ -21,12 +21,10 @@ public:
 
 protected slots:
     void setInputFieldsData();
-    void doFilter(QString term);
 
 
 private:
     Ui::MainWindow *ui;
-    QAbstractItemModel *_model;
 
     AddressBook _contacts;
 };
